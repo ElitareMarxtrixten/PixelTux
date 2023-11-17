@@ -3,6 +3,13 @@
 	<meta name="description" content="A drawing app" />
 </svelte:head>
 
-<section>
-	<h1>Hello World!</h1>
-</section>
+<header>
+	<h1>PixelTux</h1>
+</header>
+<main>
+	<div id="drawing-area"></div>
+</main>
+
+<style>
+	@import './styles.css';
+</style>
