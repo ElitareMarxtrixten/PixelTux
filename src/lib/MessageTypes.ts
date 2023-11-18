@@ -1,6 +1,4 @@
-import type { IntRange } from "./IntRange";
-
-type Pixel = [number, number, IntRange<0, 3>]; // [x, y, Farbcode]
+export type Pixel = [number, number, number]; // [x, y, Farbcode]
 
 export type PixelsMsg = {
   data: Pixel[];
@@ -11,12 +9,12 @@ export type AllPixelsMsg = {
 };
 
 export type PixelRowMsg = {
-  row: IntRange<0, 63>; // Should be a number between 0 and 63
+  row: number; // Should be a number between 0 and 63
   data: string; //128px
 };
 
 export type PixelColMsg = {
-  col: IntRange<0, 127>; // Should be a number between 0 and 127
+  col: number; // Should be a number between 0 and 127
   data: string; //128px
 };
 

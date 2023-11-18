@@ -21,7 +21,15 @@ export class MqttService {
     }
 
     public sendMessages(messages: PixelsMsg) {
-        this.client.publish(this.topic, JSON.stringify(messages), (err) => {
+        this.client.publish(this.topic + "/pixels", JSON.stringify(messages), (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    }
+
+    public clear() {
+        this.client.publish(this.topic + "/clear", "{}", (err) => {
             if (err) {
                 console.error(err);
             }

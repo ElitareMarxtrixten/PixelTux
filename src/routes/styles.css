@@ -7,6 +7,10 @@ main {
 	text-align: center;
 }
 
+body {
+	cursor: none;
+}
+
 #toolbar {
 	padding: 0.5em;
 }
@@ -31,4 +35,21 @@ main {
 	background-color: white;
 	display: inline-block;
 	box-shadow: 0.1em 0.1em 1.5em;
+}
+
+.dot {
+	height: 25px;
+	width: 25px;
+	background-color: #bbb;
+	border: black 1px solid;
+	border-radius: 50%;
+	border-color:black;
+	display: inline-block;
+}
+
+#cursor {
+	position: absolute;
+	pointer-events: none;
+	top: 10px;
+	left: 30px;
 }
