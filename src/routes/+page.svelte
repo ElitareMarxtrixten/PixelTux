@@ -3,41 +3,54 @@
 	import type { Pixel } from "$lib/MessageTypes";
 	import { MqttService } from "$lib/MqttService";
 	import { matrixStore } from "$lib/matrixStore";
-	import {onMount} from "svelte";
 
-	let canvas:  HTMLCanvasElement|undefined = undefined;
-	let toolbar: HTMLElement|undefined = undefined;
-	let context: CanvasRenderingContext2D|undefined = undefined;
+	type Color = {
+		id: number;
+		text: string
+	};
+
+	let colors: Color[] = [
+		{ id: 0, text: `Grey` },
+		{ id: 1, text: `Red` },
+		{ id: 2, text: `Lime` },
+		{ id: 3, text: `Amber` }
+	];
+
 	let cursor: HTMLElement|undefined = undefined;
 	let lineWidth: number = 5;
 	let isPainting: boolean = false;
+	let selectedColor: Color = colors[1];
 
-	let mqtt = new MqttService("localhost:9001", "pixelTux"); 
+	//let mqtt = new MqttService("localhost:9001", "pixelTux");
 
 	function onCancelClicked() {
-		context?.clearRect(0, 0, canvas!.width, canvas!.height);
-
 		$matrixStore.forEach((row, x) => {
 			row.forEach((_, y) => {
 				$matrixStore[x][y] = 0;
 			});
 		});
-		mqtt.clear();
+
+		//mqtt.clear();
 	}
 
 	function colorForCode(code: number) {
-        if (code === 0) {
-            return "bg-gray-500"
-        }
-        if (code === 1) {
-            return "bg-red-600"
-        }
-        if (code === 2) {
-            return "bg-lime-500"
-        }
-        if (code === 3) {
-            return "bg-amber-500"
-        }
+		let colorClass: string = "";
+
+		switch (code) {
+			case 0:
+				colorClass = "bg-gray-500";
+				break;
+			case 1:
+				colorClass = "bg-red-600";
+				break;
+			case 2:
+				colorClass = "bg-lime-500";
+				break;
+			default:
+				colorClass = "bg-amber-500";
+		}
+
+		return colorClass;
     }
 
 	function onTouchDown(event: TouchEvent) {
@@ -63,7 +76,6 @@
 			clientX: touch.clientX,
 			clientY: touch.clientY
 		});
-		canvas!.dispatchEvent(mouseEvent);
 	}
 
 	function mouseMove(event: MouseEvent) {
@@ -92,32 +104,18 @@
 								y: parseInt(pixel.getAttribute("data-posY")!)
 							}
 
-							$matrixStore[pixelPos.x][pixelPos.y] = 2;
+							$matrixStore[pixelPos.x][pixelPos.y] = selectedColor.id;
 
 							const msg = {
-								data: [[pixelPos.x, pixelPos.y, 2]] as Pixel[]
+								data: [[pixelPos.x, pixelPos.y, selectedColor.id]] as Pixel[]
 							};
-							mqtt.sendMessages(msg);
+							//mqtt.sendMessages(msg);
 						}
 					}).then();
 				}
 			}
 		}).then();
 	}
-
-	onMount(() => {
-		// TODO: Find out why canvas?.getContext("2d") does not work gay
-		context = canvas!.getContext("2d");
-		context.strokeStyle = "black";
-		const canvasOffsetX: number = canvas!.offsetLeft;
-		const canvasOffsetY: number = canvas!.offsetTop;
-
-		canvas!.width = window.innerWidth - canvasOffsetX;
-		canvas!.height = window.innerHeight - canvasOffsetY;
-
-
-
-	}); 
 </script>
 
 <svelte:head>
@@ -131,11 +129,19 @@
 	<h1>PixelTux</h1>
 </header>
 <main>
-	<div bind:this={toolbar} id="toolbar">
+	<div id="toolbar">
 		<label for="stroke">Stroke</label>
-		<input id="stroke" name="stroke" type="color">
+		<select bind:value={selectedColor}>
+			{#each colors as color}
+				<option value={color}>
+					{color.text}
+				</option>
+			{/each}
+		</select>
+
 		<label for="lineWidth">Line Width</label>
-		<input id="lineWidth" name="lineWidth" type="number" value="5" min="1">
+		<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
+
 		<button id="clear" on:click={onCancelClicked}>Clear</button>
 	</div>
 
