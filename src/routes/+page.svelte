@@ -199,7 +199,9 @@
 			alert("no topic prefix given!")
 		}
 
-		mqttService?.disconnect()
+		if (mqttService.isConnected()) {
+			mqttService.disconnect()
+		}
 
 		loading = true
 		try {
