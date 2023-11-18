@@ -6,6 +6,9 @@
 	import type { Point } from "$lib/types/Point";
 	import {Icon} from '@steeze-ui/svelte-icon'
 	import {XMark} from '@steeze-ui/heroicons'
+	import {ArrowDownTray} from "@steeze-ui/heroicons";
+	import {ArrowUpTray} from "@steeze-ui/heroicons";
+	import {Trash} from "@steeze-ui/heroicons";
 
 	type Color = {
 		id: number;
@@ -211,9 +214,15 @@
 			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
 
 
-			<button id="clear" on:click={onCancelClicked}>Clear</button>
-			<button id="save" on:click={save}>Save</button>
-			<button id="load" on:click={load}>Load</button>
+			<button id="clear-button" on:click={onCancelClicked}>
+				<Icon src={Trash} theme='solid' class='color-gray-10'></Icon>
+			</button>
+			<button id="save-button" on:click={save}>
+				<Icon src={ArrowDownTray} theme='solid' class='color-gray-10'></Icon>
+			</button>
+			<button id="load-button" on:click={load}>
+				<Icon src={ArrowUpTray} theme='solid' class='color-gray-10'></Icon>
+			</button>
 		</div>
 		<div class="h-screen w-screen bg-slate-700 justify-center flex">
 			<div class="flex flex-col">

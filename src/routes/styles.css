@@ -108,11 +108,8 @@ h1 {
 	background-color: orange;
 }
 
-#clear {
-	margin-bottom: 0.5em;
-}
-
-#eraser-button {
+#clear-button, #eraser-button, #save-button, #load-button {
 	width: 2em;
 	height: 2em;
+	margin-bottom: 0.5em;
 }
