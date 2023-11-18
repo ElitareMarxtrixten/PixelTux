@@ -98,5 +98,18 @@ h1 {
 #clear-button, #eraser-button, #save-button, #load-button {
 	width: 2em;
 	height: 2em;
+}
+
+#clear-button, #eraser-button, #save-button {
+	width: 2em;
+	height: 2em;
 	margin-bottom: 0.5em;
+}
+
+#load-button {
+	margin-bottom: 4em;
+}
+
+#clear-button {
+	background-color: red !important;
 }

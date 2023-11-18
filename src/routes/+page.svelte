@@ -10,6 +10,12 @@
 	import {ArrowUpTray} from "@steeze-ui/heroicons";
 	import {Trash} from "@steeze-ui/heroicons";
 	import {onMount} from "svelte";
+	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome'
+	import { faEraser } from '@fortawesome/free-solid-svg-icons'
+	import { config } from '@fortawesome/fontawesome-svg-core'
+
+	import '@fortawesome/fontawesome-svg-core/styles.css' // Import the CSS
+	config.autoAddCss = false // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
 	type Color = {
 		id: number;
@@ -220,16 +226,16 @@
 			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
 
 			<button id="eraser-button" on:click={() => onColorClicked(0)}>
-				<Icon src={XMark} theme='solid' class='color-gray-10'></Icon>
-			</button>
-			<button id="clear-button" on:click={onCancelClicked}>
-				<Icon src={Trash} theme='solid' class='color-gray-10'></Icon>
+				<FontAwesomeIcon icon={faEraser} />
 			</button>
 			<button id="save-button" on:click={save}>
 				<Icon src={ArrowDownTray} theme='solid' class='color-gray-10'></Icon>
 			</button>
 			<button id="load-button" on:click={load}>
 				<Icon src={ArrowUpTray} theme='solid' class='color-gray-10'></Icon>
+			</button>
+			<button id="clear-button" on:click={onCancelClicked}>
+				<Icon src={Trash} theme='solid' class='color-gray-10'></Icon>
 			</button>
 		</div>
 		<div class="h-screen w-screen bg-slate-700 justify-center flex">
