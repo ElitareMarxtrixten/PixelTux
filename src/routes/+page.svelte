@@ -75,6 +75,18 @@
 		cursor?.classList.add(selectedColor.cssClass);
 	}
 
+	function onMinusButtonClicked() {
+		if (lineWidth - 2 > 0) {
+			lineWidth = lineWidth - 2;
+			onLineWidthChanged();
+		}
+	}
+
+	function onPlusButtonClicked() {
+		lineWidth = lineWidth + 2;
+		onLineWidthChanged();
+	}
+
 	function onLineWidthChanged() {
 		cursor!.style!.width = `${lineWidth}px`;
 		cursor!.style!.height = `${lineWidth}px`;
@@ -241,11 +253,10 @@
 			<label for="lineWidth">Line Width</label>
 
 			<div id="lineWidthChanger">
-				<button id="minus-button">-</button>
+				<button id="minus-button" on:click={onMinusButtonClicked}>-</button>
 				<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth} on:change={onLineWidthChanged}>
-				<button id="plus-button">+</button>
+				<button id="plus-button" on:click={onPlusButtonClicked}>+</button>
 			</div>
-
 
 			<button id="eraser-button" on:click={() => onColorClicked(0)}>
 				<FontAwesomeIcon icon={faEraser} />
