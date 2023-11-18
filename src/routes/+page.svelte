@@ -103,11 +103,7 @@
 	function onTouch(event: TouchEvent) {
 		event.preventDefault();
 		const touch = event.touches[0];
-		const touchEvent = {
-			x: touch.clientX,
-			y: touch.clientY
-		}
-		
+
 		const center = lineWidth / 2;
 		const mouse = {
 			x: touch.clientX - center,
@@ -117,7 +113,7 @@
 		cursor!.style.left = `${mouse.x}px`;
 		cursor!.style.top = `${mouse.y}px`;
 
-		draw(touchEvent);
+		draw(mouse);
 	}
 
 	function mouseMove(event: MouseEvent) {
