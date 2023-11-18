@@ -85,6 +85,25 @@ h1 {
 	left: 30px;
 }
 
-#red {
-	background-color: #d11204;
+#colors {
+	display: flex;
+}
+
+#color-green, #color-red, #color-orange {
+	border-radius: 100%;
+	width: 1.5em;
+	height: 1.5em;
+	margin: 0.5em;
+}
+
+#color-green {
+	background-color: green;
+}
+
+#color-red {
+	background-color: red;
+}
+
+#color-orange {
+	background-color: orange;
 }

@@ -6,7 +6,7 @@
 
 	type Color = {
 		id: number;
-		text: string
+		cssId: string
 	};
 
 	type Point = {
@@ -15,10 +15,10 @@
 	};
 
 	let colors: Color[] = [
-		{ id: 0, text: `Grey` },
-		{ id: 1, text: `Red` },
-		{ id: 2, text: `Lime` },
-		{ id: 3, text: `Amber` }
+		{ id: 0, cssId: `Grey` },
+		{ id: 1, cssId: `color-red` },
+		{ id: 2, cssId: `color-green` },
+		{ id: 3, cssId: `color-orange` }
 	];
 
 	let cursor: HTMLElement|undefined = undefined;
@@ -58,6 +58,10 @@
 
 		return colorClass;
     }
+
+	function onColorClicked(colorId: number) {
+		selectedColor = colors.find(color => color.id === colorId);
+	}
 
 	function onMouseDown(event: MouseEvent) {
 		isPainting = true;
@@ -136,16 +140,14 @@
 <main>
 	<div id="content">
 		<div id="toolbar">
-				<h1>PixelTux</h1>
+			<h1>PixelTux</h1>
 
-			<label for="stroke">Stroke</label>
-			<select bind:value={selectedColor}>
+			<label>Colors</label>
+			<div id="colors">
 				{#each colors as color}
-					<option value={color}>
-						{color.text}
-					</option>
+					<div id="{color.cssId}" on:click={() => onColorClicked(color.id)}></div>
 				{/each}
-			</select>
+			</div>
 
 			<label for="lineWidth">Line Width</label>
 			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
