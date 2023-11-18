@@ -30,7 +30,7 @@
 	];
 
 	let cursor: HTMLElement|undefined = undefined;
-	let lineWidth: number = 25;
+	let lineWidth: number = 24;
 	let isPainting: boolean = false;
 	let selectedColor: Color = colors[1];
 
@@ -268,7 +268,7 @@
 			</button>
 		</div>
 		<div class="h-screen w-screen bg-slate-700 justify-center flex">
-			<div class="flex flex-col">
+			<div class="grid content-center">
 				<div class="bg-black p-8 grow-0 touch-none" on:mousedown={onMouseDown} on:touchdown={onTouch}>
 					<div class="flex">
 						{#each {length: MATRIX_SIZE_X} as _, x }
