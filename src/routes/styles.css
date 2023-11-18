@@ -64,7 +64,7 @@ h1 {
 	display: flex;
 }
 
-#color-green, #color-red, #color-orange {
+.color-circle {
 	border-radius: 100%;
 	width: 2em;
 	height: 2em;

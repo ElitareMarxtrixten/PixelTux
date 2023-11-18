@@ -1,35 +1,18 @@
 <script lang="ts">
-	import { MATRIX_SIZE_X, MATRIX_SIZE_Y } from "$lib/Constants";
 	import type { Pixel } from "$lib/MessageTypes";
 	import { MqttService } from "$lib/MqttService";
 	import { matrixStore } from "$lib/matrixStore";
 	import type { Point } from "$lib/types/Point";
-	import {Icon} from '@steeze-ui/svelte-icon'
-	import {ArrowDownTray} from "@steeze-ui/heroicons";
-	import {ArrowUpTray} from "@steeze-ui/heroicons";
-	import {Trash} from "@steeze-ui/heroicons";
 	import {onMount} from "svelte";
-	import { FontAwesomeIcon } from '@fortawesome/svelte-fontawesome'
-	import { faEraser } from '@fortawesome/free-solid-svg-icons'
 	import { config } from '@fortawesome/fontawesome-svg-core'
 
 	import '@fortawesome/fontawesome-svg-core/styles.css'
 	import Toolbar from "./Toolbar.svelte";
-	import DrawBoard from "./DrawBoard.svelte"; // Import the CSS
+	import DrawBoard from "./DrawBoard.svelte";
+	import type {Color} from "$lib/Color";
+	import {colors} from "$lib/Color"; // Import the CSS
 	config.autoAddCss = false // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
-	type Color = {
-		id: number;
-		cssId: string;
-		cssClass: string;
-	};
-
-	let colors: Color[] = [
-		{ id: 0, cssId: `color-grey`, cssClass: 'bg-gray-500' },
-		{ id: 1, cssId: `color-red`, cssClass: 'bg-red-600' },
-		{ id: 2, cssId: `color-green`, cssClass: 'bg-lime-500' },
-		{ id: 3, cssId: `color-orange`, cssClass: 'bg-amber-500' }
-	];
 
 	let cursor: HTMLElement|undefined = undefined;
 	let lineWidth: number = 25;
@@ -219,7 +202,6 @@
 <main>
 	<div id="content">
 		<Toolbar
-				colors={colors}
 				lineWidth={lineWidth}
 				on:onColorClicked={onColorClicked}
 				on:onMinusButtonClicked={onMinusButtonClicked}

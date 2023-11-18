@@ -4,8 +4,8 @@
     import {FontAwesomeIcon} from "@fortawesome/svelte-fontawesome";
     import {Icon} from "@steeze-ui/svelte-icon";
     import {createEventDispatcher} from "svelte";
+    import {colors} from "$lib/Color";
 
-    export let colors;
     export let lineWidth;
 
     const dispatch = createEventDispatcher();
@@ -45,8 +45,10 @@
 
     <label>Colors</label>
     <div id="colors">
-        {#each colors as color}
-            <div id="{color.cssId}" class="{color.cssClass}" on:click={() => onColorClicked(color.id)}></div>
+        {#each colors as color, index}
+            {#if index !== 0}
+                <div class="color-circle {color.cssClass}" on:click={() => onColorClicked(color.id)}></div>
+            {/if}
         {/each}
     </div>
 
