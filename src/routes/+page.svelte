@@ -226,49 +226,9 @@
 				on:onLoadClicked={onLoadClicked}
 				on:onCancelClicked={onCancelClicked} />
 
-			<label>Colors</label>
-			<div id="colors">
-				{#each colors as color}
-					<div id="{color.cssId}" class="{color.cssClass}" on:click={() => onColorClicked(color.id)}></div>
-				{/each}
-			</div>
-
-			<label for="lineWidth">Line Width</label>
-
-			<div id="lineWidthChanger">
-				<button id="minus-button" on:click={onMinusButtonClicked}>-</button>
-				<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth} on:change={onLineWidthChanged}>
-				<button id="plus-button" on:click={onPlusButtonClicked}>+</button>
-			</div>
-
-			<button id="eraser-button" on:click={() => onColorClicked(0)}>
-				<FontAwesomeIcon icon={faEraser} />
-			</button>
-			<button id="save-button" on:click={save}>
-				<Icon src={ArrowDownTray} theme='solid' class='color-gray-10'></Icon>
-			</button>
-			<button id="load-button" on:click={load}>
-				<Icon src={ArrowUpTray} theme='solid' class='color-gray-10'></Icon>
-			</button>
-			<button id="clear-button" on:click={onCancelClicked}>
-				<Icon src={Trash} theme='solid' class='color-gray-10'></Icon>
-			</button>
-		</div>
-		<div class="h-screen w-screen bg-slate-700 justify-center grid pt-5">
-			<div class="flex flex-col">
-				<div class="bg-black p-8 grow-0 touch-none" on:mousedown={onMouseDown} on:touchdown={onTouch}>
-					<div class="flex">
-						{#each {length: MATRIX_SIZE_X} as _, x }
-							<div class="flex-col">
-								{#each {length: MATRIX_SIZE_Y} as _, y }
-									<div class={"h-2 w-2 ml-1 mb-1 rounded-full mxPixel " + colorForCode($matrixStore[x][y])} data-posX={x}, data-posY={y}></div>
-								{/each}
-							</div>
-						{/each}
-					</div>
-				</div>
-			</div>
-		</div>
+				<DrawBoard
+				on:onMouseDown={onMouseDown}
+				on:onTouch={onTouch} />
 	</div>
 	<span class="dot" id="cursor" bind:this={cursor} />
 </main>
