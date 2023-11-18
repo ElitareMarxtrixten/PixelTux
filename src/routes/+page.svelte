@@ -5,7 +5,6 @@
 	import { matrixStore } from "$lib/matrixStore";
 	import type { Point } from "$lib/types/Point";
 	import {Icon} from '@steeze-ui/svelte-icon'
-	import {XMark} from '@steeze-ui/heroicons'
 	import {ArrowDownTray} from "@steeze-ui/heroicons";
 	import {ArrowUpTray} from "@steeze-ui/heroicons";
 	import {Trash} from "@steeze-ui/heroicons";
@@ -31,7 +30,7 @@
 	];
 
 	let cursor: HTMLElement|undefined = undefined;
-	let lineWidth: number = 5;
+	let lineWidth: number = 25;
 	let isPainting: boolean = false;
 	let selectedColor: Color = colors[1];
 
@@ -76,6 +75,11 @@
 		cursor?.classList.add(selectedColor.cssClass);
 	}
 
+	function onLineWidthChanged() {
+		cursor!.style!.width = `${lineWidth}px`;
+		cursor!.style!.height = `${lineWidth}px`;
+	}
+
 	function onMouseDown(event: MouseEvent) {
 		isPainting = true;
 	}
@@ -97,16 +101,18 @@
 
 	function mouseMove(event: MouseEvent) {
 		event.preventDefault();
-		cursor!.style.left = `${event.clientX - 12.5}px`;
-		cursor!.style.top = `${event.clientY - 12.5}px`;
+
+		const center = lineWidth / 2;
+		const mouse = {
+			x: event.clientX - center,
+			y: event.clientY - center
+		}
+
+		cursor!.style.left = `${mouse.x}px`;
+		cursor!.style.top = `${mouse.y}px`;
 
 		if (!isPainting) {
 			return;
-		}
-
-		const mouse = {
-			x: event.clientX - 12.5,
-			y: event.clientY -12.5
 		}
 
 		draw(mouse);
@@ -114,9 +120,8 @@
 
 	function draw(cursor: Point) {
 		new Promise(r => {
-
-		for (let i = 0; i < 6; i++) {
-			for (let j = 0; j < 6; j++) {
+		for (let i = 0; i < (lineWidth / 4); i++) {
+			for (let j = 0; j < (lineWidth / 4); j++) {
 				new Promise(r1 => {
 					const pixel = document.elementFromPoint(cursor.x + (i * 4), cursor.y + (j *4));
 					if (pixel?.classList.contains("mxPixel")) {
@@ -199,6 +204,9 @@
 
 	onMount(() => {
 		cursor?.classList.add(colors[1].cssClass);
+
+		cursor!.style!.width = `${lineWidth}px`;
+		cursor!.style!.height = `${lineWidth}px`;
 	});
 </script>
 
@@ -223,7 +231,7 @@
 
 			<label for="lineWidth">Line Width</label>
 
-			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
+			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth} on:change={onLineWidthChanged}>
 
 			<button id="eraser-button" on:click={() => onColorClicked(0)}>
 				<FontAwesomeIcon icon={faEraser} />
