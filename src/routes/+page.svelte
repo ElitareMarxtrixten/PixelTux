@@ -14,7 +14,8 @@
 	import { config } from '@fortawesome/fontawesome-svg-core'
 
 	import '@fortawesome/fontawesome-svg-core/styles.css'
-	import Toolbar from "./Toolbar.svelte"; // Import the CSS
+	import Toolbar from "./Toolbar.svelte";
+	import DrawBoard from "./DrawBoard.svelte"; // Import the CSS
 	config.autoAddCss = false // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
 	type Color = {
@@ -47,26 +48,6 @@
 
 		mqtt.clear();
 	}
-
-	function colorForCode(code: number) {
-		let colorClass: string = "";
-
-		switch (code) {
-			case 0:
-				colorClass = "bg-gray-500";
-				break;
-			case 1:
-				colorClass = "bg-red-600";
-				break;
-			case 2:
-				colorClass = "bg-lime-500";
-				break;
-			default:
-				colorClass = "bg-amber-500";
-		}
-
-		return colorClass;
-    }
 
 	function onColorClicked(event: any) {
 		selectedColor = colors.find(color => color.id === event.detail.colorId);
@@ -246,23 +227,11 @@
 				on:onPlusButtonClicked={onPlusButtonClicked}
 				on:onSaveClicked={onSaveClicked}
 				on:onLoadClicked={onLoadClicked}
-				on:onCancelClicked={onCancelClicked}/>
+				on:onCancelClicked={onCancelClicked} />
 
-		<div class="h-screen w-screen bg-slate-700 justify-center flex">
-			<div class="flex flex-col">
-				<div class="bg-black p-8 grow-0 touch-none" on:mousedown={onMouseDown} on:touchdown={onTouch}>
-					<div class="flex">
-						{#each {length: MATRIX_SIZE_X} as _, x }
-							<div class="flex-col">
-								{#each {length: MATRIX_SIZE_Y} as _, y }
-									<div class={"h-2 w-2 ml-1 mb-1 rounded-full mxPixel " + colorForCode($matrixStore[x][y])} data-posX={x}, data-posY={y}></div>
-								{/each}
-							</div>
-						{/each}
-					</div>
-				</div>
-			</div>
-		</div>
+		<DrawBoard
+			on:onMouseDown={onMouseDown}
+			on:onTouch={onTouch} />
 	</div>
 	<span class="dot" id="cursor" bind:this={cursor} />
 </main>
