@@ -11,12 +11,13 @@ export class MqttService {
     private client: MqttClient;
     private topic: string;
 
-    constructor(address: string, topic: string) {
-        this.client = mqtt.connect("mqtt://" + address);
+    public connect(address: string, topic: string) {
         this.topic = topic;
 
+        this.client = mqtt.connect("mqtt://" + address);
+
         this.client.on("connect", () => {
-            this.client.subscribe(topic);
+            this.client.subscribe(this.topic);
         });
 
         this.client.on("reconnect", () => {
@@ -24,8 +25,12 @@ export class MqttService {
         });
     }
 
+    public disconnect() {
+        this.client.end();
+    }
+
     public isConnected(): boolean {
-        return this.client.connected;
+        return this.client === undefined ? false : this.client.connected;
     }
 
     private swapCoordinates(originalArray: number[][]) {

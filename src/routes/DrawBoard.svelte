@@ -34,18 +34,16 @@
     }
 </script>
 
-<div class="h-screen w-screen bg-slate-700 justify-center grid pt-5">
-    <div class="flex flex-col">
-        <div class="bg-black p-8 grow-0 touch-none" on:mousedown={onMouseDown} on:touchdown={onTouch}>
-            <div class="flex">
-                {#each {length: MATRIX_SIZE_X} as _, x }
-                    <div class="flex-col">
-                        {#each {length: MATRIX_SIZE_Y} as _, y }
-                            <div class={"h-2 w-2 ml-1 mb-1 rounded-full mxPixel " + colorForCode($matrixStore[x][y])} data-posX={x}, data-posY={y}></div>
-                        {/each}
-                    </div>
-                {/each}
-            </div>
+<div class="flex flex-col">
+    <div class="bg-black p-8 grow-0 touch-none" on:mousedown={onMouseDown} on:touchdown={onTouch}>
+        <div class="flex">
+            {#each {length: MATRIX_SIZE_X} as _, x }
+                <div class="flex-col">
+                    {#each {length: MATRIX_SIZE_Y} as _, y }
+                        <div class={"h-2 w-2 ml-1 mb-1 rounded-full mxPixel " + colorForCode($matrixStore[x][y])} data-posX={x}, data-posY={y}></div>
+                    {/each}
+                </div>
+            {/each}
         </div>
     </div>
 </div>

@@ -13,15 +13,15 @@
 	import {colors} from "$lib/Color"; // Import the CSS
 	config.autoAddCss = false // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
-
 	let cursor: HTMLElement|undefined = undefined;
 	let lineWidth: number = 25;
 	let isPainting: boolean = false;
 	let selectedColor: Color = colors[1];
-	let isConnectedToMqtt: boolean = false;
+	let mqttAddress = "";
+	let topicPrefix = "";
+	let loading = false;
 
-	let mqtt = new MqttService("192.168.1.101:9001", "matrix");
-	//let mqtt = new MqttService("192.168.1.107:9001", "pixelTux");
+	let mqttService = new MqttService();
 
 	function onCancelClicked() {
 		$matrixStore.forEach((row, x) => {
@@ -30,8 +30,8 @@
 			});
 		});
 
-		if (mqtt.isConnected()) {
-			mqtt.clear();
+		if (mqttService.isConnected()) {
+			mqttService.clear();
 		}
 	}
 
@@ -125,8 +125,8 @@
 							data: [[pixelPos.x, pixelPos.y, selectedColor.id]] as Pixel[]
 						};
 
-						if (mqtt.isConnected()) {
-							mqtt.sendMessages(msg);
+						if (mqttService.isConnected()) {
+							mqttService.sendMessages(msg);
 						}
 					}
 				}).then();
@@ -180,13 +180,39 @@
 					$matrixStore[x][y] = color;
 				});
 
-				if (mqtt.isConnected()) {
-					mqtt.sendAllPixels($matrixStore);
+				if (mqttService.isConnected()) {
+					mqttService.sendAllPixels($matrixStore);
 				}
 			};
 			reader.readAsText(file);
 		};
 		input.click();
+	}
+
+	async function handleSubscription() {
+		if (mqttAddress === "") {
+			alert("no mqtt address given!")
+			return
+		}
+
+		if (topicPrefix === "") {
+			alert("no topic prefix given!")
+		}
+
+		mqttService?.disconnect()
+
+		loading = true
+		try {
+			mqttService.connect(mqttAddress, topicPrefix);
+		} catch (_) {
+			alert("Something went wrong during connection with mqqt message broker - see debug console for details");
+		} finally {
+			loading = false;
+		}
+	}
+
+	function handleCloseSubscription() {
+		mqttService.disconnect();
 	}
 
 	onMount(() => {
@@ -207,19 +233,50 @@
 <main>
 	<div id="content">
 		<Toolbar
-				lineWidth={lineWidth}
-				on:onColorClicked={onColorClicked}
-				on:onMinusButtonClicked={onMinusButtonClicked}
-				on:lineWidthChanged={onLineWidthChanged}
-				on:onPlusButtonClicked={onPlusButtonClicked}
-				on:onSaveClicked={onSaveClicked}
-				on:onLoadClicked={onLoadClicked}
-				on:onCancelClicked={onCancelClicked} />
+		lineWidth={lineWidth}
+		on:onColorClicked={onColorClicked}
+		on:onMinusButtonClicked={onMinusButtonClicked}
+		on:lineWidthChanged={onLineWidthChanged}
+		on:onPlusButtonClicked={onPlusButtonClicked}
+		on:onSaveClicked={onSaveClicked}
+		on:onLoadClicked={onLoadClicked}
+		on:onCancelClicked={onCancelClicked} />
 
-				<DrawBoard
-				on:onMouseDown={onMouseDown}
-				on:onTouch={onTouch} />
+		<div class="h-screen w-screen bg-slate-700 justify-center grid pt-5">
+			<DrawBoard
+			on:onMouseDown={onMouseDown}
+			on:onTouch={onTouch} />
+
+			<div class="grow mt-5">
+				<form on:submit={handleSubscription} class="flex gap-8 justify-center">
+					<div class="flex gap-3">
+						<label for="server-ip" class="text-gray-300 text-lg" >MQTT-Server Address:</label>
+						<input id="server-ip"
+							   bind:value={mqttAddress}
+							   disabled={mqttService.isConnected()}
+							   class="w-40 rounded-md py-1 px-2 text-gray-200 bg-slate-600 border border-slate-800">
+					</div>
+
+					<div class="flex gap-3">
+						<label for="topic-prefix" class="text-gray-300 text-lg">Topic-Prefix</label>
+						<input id="topic-prefix"
+							   bind:value={topicPrefix}
+							   disabled={mqttService.isConnected()}
+							   class="w-40 rounded-md py-1 px-2 text-gray-200 bg-slate-600 border border-slate-800">
+					</div>
+
+					{#if !mqttService.isConnected()}
+						<button class="w-40 h-10 rounded-md py-1 px-2 text-gray-200 bg-slate-600 border border-slate-800"
+								class:opacity-50={loading} disabled={loading}>Connect</button>
+					{:else}
+						<button on:click|preventDefault={handleCloseSubscription}
+								class="w-40 h-10 rounded-md py-1 px-2 text-gray-200 bg-red-900 border border-red-950">Disconnect</button>
+					{/if}
+				</form>
+			</div>
+		</div>
 	</div>
+
 	<span class="dot" id="cursor" bind:this={cursor} />
 </main>
 
