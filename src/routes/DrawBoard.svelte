@@ -35,7 +35,7 @@
 </script>
 
 <div class="h-screen w-screen bg-slate-700 justify-center flex">
-    <div class="flex flex-col">
+    <div class="grid content-center">
         <div class="bg-black p-8 grow-0 touch-none" on:mousedown={onMouseDown} on:touchdown={onTouch}>
             <div class="flex">
                 {#each {length: MATRIX_SIZE_X} as _, x }
