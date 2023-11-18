@@ -3,15 +3,11 @@
 	import type { Pixel } from "$lib/MessageTypes";
 	import { MqttService } from "$lib/MqttService";
 	import { matrixStore } from "$lib/matrixStore";
+	import type { Point } from "$lib/types/Point";
 
 	type Color = {
 		id: number;
 		text: string
-	};
-
-	type Point = {
-		x: number;
-		y: number;
 	};
 
 	let colors: Color[] = [
