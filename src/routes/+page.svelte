@@ -13,7 +13,8 @@
 	import { faEraser } from '@fortawesome/free-solid-svg-icons'
 	import { config } from '@fortawesome/fontawesome-svg-core'
 
-	import '@fortawesome/fontawesome-svg-core/styles.css' // Import the CSS
+	import '@fortawesome/fontawesome-svg-core/styles.css'
+	import Toolbar from "./Toolbar.svelte"; // Import the CSS
 	config.autoAddCss = false // Tell Font Awesome to skip adding the CSS automatically since it's being imported above
 
 	type Color = {
@@ -67,8 +68,8 @@
 		return colorClass;
     }
 
-	function onColorClicked(colorId: number) {
-		selectedColor = colors.find(color => color.id === colorId);
+	function onColorClicked(event: any) {
+		selectedColor = colors.find(color => color.id === event.detail.colorId);
 
 		cursor?.classList.remove(...cursor?.classList);
 		cursor?.classList.add('dot');
@@ -164,7 +165,7 @@
 		}).then();
 	}
 
-	function save() {
+	function onSaveClicked() {
 		let data = "";
 
 		$matrixStore.forEach((row, x) => {
@@ -186,7 +187,7 @@
 		document.body.removeChild(a);
 	}
 
-	function load() {
+	function onLoadClicked() {
 		const input = document.createElement('input');
 		input.type = 'file';
 		input.accept = '.ptx';
@@ -236,37 +237,17 @@
 
 <main>
 	<div id="content">
-		<div id="toolbar">
-			<h1>PixelTux</h1>
+		<Toolbar
+				colors={colors}
+				lineWidth={lineWidth}
+				on:onColorClicked={onColorClicked}
+				on:onMinusButtonClicked={onMinusButtonClicked}
+				on:lineWidthChanged={onLineWidthChanged}
+				on:onPlusButtonClicked={onPlusButtonClicked}
+				on:onSaveClicked={onSaveClicked}
+				on:onLoadClicked={onLoadClicked}
+				on:onCancelClicked={onCancelClicked}/>
 
-			<label>Colors</label>
-			<div id="colors">
-				{#each colors as color}
-					<div id="{color.cssId}" class="{color.cssClass}" on:click={() => onColorClicked(color.id)}></div>
-				{/each}
-			</div>
-
-			<label for="lineWidth">Line Width</label>
-
-			<div id="lineWidthChanger">
-				<button id="minus-button" on:click={onMinusButtonClicked}>-</button>
-				<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth} on:change={onLineWidthChanged}>
-				<button id="plus-button" on:click={onPlusButtonClicked}>+</button>
-			</div>
-
-			<button id="eraser-button" on:click={() => onColorClicked(0)}>
-				<FontAwesomeIcon icon={faEraser} />
-			</button>
-			<button id="save-button" on:click={save}>
-				<Icon src={ArrowDownTray} theme='solid' class='color-gray-10'></Icon>
-			</button>
-			<button id="load-button" on:click={load}>
-				<Icon src={ArrowUpTray} theme='solid' class='color-gray-10'></Icon>
-			</button>
-			<button id="clear-button" on:click={onCancelClicked}>
-				<Icon src={Trash} theme='solid' class='color-gray-10'></Icon>
-			</button>
-		</div>
 		<div class="h-screen w-screen bg-slate-700 justify-center flex">
 			<div class="flex flex-col">
 				<div class="bg-black p-8 grow-0 touch-none" on:mousedown={onMouseDown} on:touchdown={onTouch}>
