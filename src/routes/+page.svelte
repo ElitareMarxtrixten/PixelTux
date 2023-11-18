@@ -17,8 +17,8 @@
 	let lineWidth: number = 25;
 	let isPainting: boolean = false;
 	let selectedColor: Color = colors[1];
-	let mqttAddress = "";
-	let topicPrefix = "";
+	let mqttAddress = "192.168.1.101:9001";
+	let topicPrefix = "matrix";
 	let loading = false;
 	let isMqttConnected: boolean = false;
 
