@@ -40,15 +40,34 @@
         }
     }
 
+	function onTouchDown(event: TouchEvent) {
+		isPainting = true;
+	}
+
 	function onMouseDown(event: MouseEvent) {
 		isPainting = true;
+	}
+
+	function onTouchUp(event: TouchEvent) {
+		isPainting = false;
 	}
 
 	function onMouseUp(event: MouseEvent) {
 		isPainting = false;
 	}
 
+	function onTouch(event: TouchEvent) {
+		event.preventDefault();
+		const touch = event.touches[0];
+		const mouseEvent = new MouseEvent("mousedown", {
+			clientX: touch.clientX,
+			clientY: touch.clientY
+		});
+		canvas!.dispatchEvent(mouseEvent);
+	}
+
 	function mouseMove(event: MouseEvent) {
+		event.preventDefault();
 		cursor!.style.left = `${event.clientX - 12.5}px`;
 		cursor!.style.top = `${event.clientY - 12.5}px`;
 
@@ -106,7 +125,7 @@
 	<meta name="description" content="A drawing app" />
 </svelte:head>
 
-<svelte:body on:mousemove={mouseMove} on:mouseup={onMouseUp} />
+<svelte:body on:touchmove={onTouch} on:touchend={onTouchUp} on:mouseover={mouseMove} on:mouseup={onMouseUp} />
 
 <header>
 	<h1>PixelTux</h1>
@@ -122,7 +141,7 @@
 
 	<div class="h-screen w-screen bg-slate-700 justify-center flex">
 		<div class="flex flex-col">
-			<div class="bg-black p-8 grow-0" on:mousedown={onMouseDown}>
+			<div class="bg-black p-8 grow-0 touch-auto" on:mousedown={onMouseDown} on:touchdown={onTouchDown}>
 				<div class="flex">
 					{#each {length: MATRIX_SIZE_X} as _, x }
 						<div class="flex-col"> 
