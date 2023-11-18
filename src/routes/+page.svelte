@@ -240,7 +240,12 @@
 
 			<label for="lineWidth">Line Width</label>
 
-			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth} on:change={onLineWidthChanged}>
+			<div id="lineWidthChanger">
+				<button id="minus-button">-</button>
+				<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth} on:change={onLineWidthChanged}>
+				<button id="plus-button">+</button>
+			</div>
+
 
 			<button id="eraser-button" on:click={() => onColorClicked(0)}>
 				<FontAwesomeIcon icon={faEraser} />
