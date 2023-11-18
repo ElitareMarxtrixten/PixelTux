@@ -9,6 +9,11 @@
 		text: string
 	};
 
+	type Point = {
+		x: number;
+		y: number;
+	};
+
 	let colors: Color[] = [
 		{ id: 0, text: `Grey` },
 		{ id: 1, text: `Red` },
@@ -21,7 +26,8 @@
 	let isPainting: boolean = false;
 	let selectedColor: Color = colors[1];
 
-	//let mqtt = new MqttService("localhost:9001", "pixelTux");
+	//let mqtt = new MqttService("192.168.1.101:9001", "matrix");
+	let mqtt = new MqttService("192.168.1.107:9001", "pixelTux");
 
 	function onCancelClicked() {
 		$matrixStore.forEach((row, x) => {
@@ -30,7 +36,7 @@
 			});
 		});
 
-		//mqtt.clear();
+		mqtt.clear();
 	}
 
 	function colorForCode(code: number) {
@@ -53,16 +59,8 @@
 		return colorClass;
     }
 
-	function onTouchDown(event: TouchEvent) {
-		isPainting = true;
-	}
-
 	function onMouseDown(event: MouseEvent) {
 		isPainting = true;
-	}
-
-	function onTouchUp(event: TouchEvent) {
-		isPainting = false;
 	}
 
 	function onMouseUp(event: MouseEvent) {
@@ -72,10 +70,12 @@
 	function onTouch(event: TouchEvent) {
 		event.preventDefault();
 		const touch = event.touches[0];
-		const mouseEvent = new MouseEvent("mousedown", {
-			clientX: touch.clientX,
-			clientY: touch.clientY
-		});
+		const mouseEvent = {
+			x: touch.clientX,
+			y: touch.clientY
+		}
+
+		draw(mouseEvent);
 	}
 
 	function mouseMove(event: MouseEvent) {
@@ -87,33 +87,41 @@
 			return;
 		}
 
+		const mouse = {
+			x: event.clientX - 12.5,
+			y: event.clientY -12.5
+		}
+
+		draw(mouse);
+	}
+
+	function draw(cursor: Point) {
 		new Promise(r => {
 
-			const cursor = {
-				x: event.clientX - 12.5,
-				y: event.clientY -12.5
-			}
-
-			for (let i = 0; i < 6; i++) {
-				for (let j = 0; j < 6; j++) {
-					new Promise(r1 => {
-						const pixel = document.elementFromPoint(cursor.x + (i * 4), cursor.y + (j *4));
-						if (pixel?.classList.contains("mxPixel")) {
-							let pixelPos = {
-								x: parseInt(pixel.getAttribute("data-posX")!),
-								y: parseInt(pixel.getAttribute("data-posY")!)
-							}
-
-							$matrixStore[pixelPos.x][pixelPos.y] = selectedColor.id;
-
-							const msg = {
-								data: [[pixelPos.x, pixelPos.y, selectedColor.id]] as Pixel[]
-							};
-							//mqtt.sendMessages(msg);
+		for (let i = 0; i < 6; i++) {
+			for (let j = 0; j < 6; j++) {
+				new Promise(r1 => {
+					const pixel = document.elementFromPoint(cursor.x + (i * 4), cursor.y + (j *4));
+					if (pixel?.classList.contains("mxPixel")) {
+						let pixelPos = {
+							x: parseInt(pixel.getAttribute("data-posX")!),
+							y: parseInt(pixel.getAttribute("data-posY")!)
 						}
-					}).then();
-				}
+
+						if ($matrixStore[pixelPos.x][pixelPos.y] == selectedColor.id) {
+							return;
+						}
+
+						$matrixStore[pixelPos.x][pixelPos.y] = selectedColor.id;
+
+						const msg = {
+							data: [[pixelPos.x, pixelPos.y, selectedColor.id]] as Pixel[]
+						};
+						mqtt.sendMessages(msg);
+					}
+				}).then();
 			}
+		}
 		}).then();
 	}
 </script>
@@ -123,7 +131,7 @@
 	<meta name="description" content="A drawing app" />
 </svelte:head>
 
-<svelte:body on:touchmove={onTouch} on:touchend={onTouchUp} on:mouseover={mouseMove} on:mouseup={onMouseUp} />
+<svelte:body on:touchmove={onTouch} on:mouseover={mouseMove} on:mouseup={onMouseUp} />
 
 <main>
 	<div id="content">
@@ -142,23 +150,17 @@
 			<label for="lineWidth">Line Width</label>
 			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
 
-			<button id="clear" on:click={onCancelClicked}>Clear</button>
-		</div>
-
-		<div>
-			<div class="h-screen w-screen bg-slate-700 justify-center flex">
-				<div class="flex flex-col">
-					<div class="bg-black p-8 grow-0 touch-auto" on:mousedown={onMouseDown} on:touchdown={onTouchDown}>
-						<div class="flex">
-							{#each {length: MATRIX_SIZE_X} as _, x }
-								<div class="flex-col">
-									{#each {length: MATRIX_SIZE_Y} as _, y }
-										<div class={"h-2 w-2 ml-1 mb-1 rounded-full mxPixel " + colorForCode($matrixStore[x][y])} data-posX={x}, data-posY={y}></div>
-									{/each}
-								</div>
+	<div class="h-screen w-screen bg-slate-700 justify-center flex">
+		<div class="flex flex-col">
+			<div class="bg-black p-8 grow-0 touch-none" on:mousedown={onMouseDown} on:touchdown={onTouchDown}>
+				<div class="flex">
+					{#each {length: MATRIX_SIZE_X} as _, x }
+						<div class="flex-col"> 
+							{#each {length: MATRIX_SIZE_Y} as _, y }
+								<div class={"h-2 w-2 ml-1 mb-1 rounded-full mxPixel " + colorForCode($matrixStore[x][y])} data-posX={x}, data-posY={y}></div>
 							{/each}
 						</div>
-					</div>
+					{/each}
 				</div>
 			</div>
 		</div>
