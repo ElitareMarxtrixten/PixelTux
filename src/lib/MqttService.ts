@@ -1,6 +1,6 @@
 import type { MqttClient } from "mqtt";
 import mqtt from "mqtt";
-import type { PixelsMsg } from "./MessageTypes";
+import type { AllPixelsMsg, PixelsMsg } from "./MessageTypes";
 
 
 export type MqttSubscription = {
@@ -22,6 +22,20 @@ export class MqttService {
 
     public sendMessages(messages: PixelsMsg) {
         this.client.publish(this.topic + "/pixels", JSON.stringify(messages), (err) => {
+            if (err) {
+                console.error(err);
+            }
+        });
+    }
+
+    public sendAllPixels(messages: number[][]) {
+        const allpixels = {
+            data: messages.map((row) => row.join("")).join("")
+        }
+        
+        console.log(allpixels);
+
+        this.client.publish(this.topic + "/allpixels", JSON.stringify(allpixels), (err) => {
             if (err) {
                 console.error(err);
             }

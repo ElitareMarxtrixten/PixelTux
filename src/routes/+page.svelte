@@ -24,8 +24,8 @@
 	let isPainting: boolean = false;
 	let selectedColor: Color = colors[1];
 
-	//let mqtt = new MqttService("192.168.1.101:9001", "matrix");
-	let mqtt = new MqttService("192.168.1.107:9001", "pixelTux");
+	let mqtt = new MqttService("192.168.1.101:9001", "matrix");
+	//let mqtt = new MqttService("192.168.1.107:9001", "pixelTux");
 
 	function onCancelClicked() {
 		$matrixStore.forEach((row, x) => {
@@ -148,6 +148,39 @@
 		a.click()
 		document.body.removeChild(a);
 	}
+
+	function load() {
+		const input = document.createElement('input');
+		input.type = 'file';
+		input.accept = '.ptx';
+		input.onchange = (event) => {
+			const file = (event.target as HTMLInputElement).files![0];
+			const reader = new FileReader();
+			reader.onload = (event) => {
+				const contents = (event.target as FileReader).result as string;
+				const lines = contents.split("\n");
+
+				lines.forEach(line => {
+					const parts = line.split(",");
+					const x = parseInt(parts[0]);
+					const y = parseInt(parts[1]);
+					const color = parseInt(parts[2]);
+
+					$matrixStore[x][y] = color;
+
+					const msg = {
+						data: [[x, y, color]] as Pixel[]
+					};
+
+					mqtt.sendMessages(msg);
+				});
+			};
+			reader.readAsText(file);
+		};
+		input.click();
+	
+		//mqtt.sendAllPixels($matrixStore);
+	}
 </script>
 
 <svelte:head>
@@ -180,6 +213,7 @@
 
 			<button id="clear" on:click={onCancelClicked}>Clear</button>
 			<button id="save" on:click={save}>Save</button>
+			<button id="load" on:click={load}>Load</button>
 		</div>
 		<div class="h-screen w-screen bg-slate-700 justify-center flex">
 			<div class="flex flex-col">
