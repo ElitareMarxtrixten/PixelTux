@@ -124,6 +124,28 @@
 		}
 		}).then();
 	}
+
+	function save() {
+		let data = "";
+
+		$matrixStore.forEach((row, x) => {
+			row.forEach((_, y) => {
+				data += `${x},${y},${$matrixStore[x][y]}\n`;
+			});
+		});
+
+		const blob = new Blob([data], { type: 'text/plain' });
+
+		const a = document.createElement('a');
+		a.download = Date.now().toString() + '.ptx';
+		a.href = window.URL.createObjectURL(blob);
+		a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+		a.style.display = "none";
+
+		document.body.appendChild(a);
+		a.click()
+		document.body.removeChild(a);
+	}
 </script>
 
 <svelte:head>
@@ -151,6 +173,7 @@
 			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
 
 			<button id="clear" on:click={onCancelClicked}>Clear</button>
+			<button on:click={save}>Save</button>
 		</div>
 		<div class="h-screen w-screen bg-slate-700 justify-center flex">
 			<div class="flex flex-col">
