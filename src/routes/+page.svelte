@@ -4,6 +4,8 @@
 	import { MqttService } from "$lib/MqttService";
 	import { matrixStore } from "$lib/matrixStore";
 	import type { Point } from "$lib/types/Point";
+	import {Icon} from '@steeze-ui/svelte-icon'
+	import {XMark} from '@steeze-ui/heroicons'
 
 	type Color = {
 		id: number;
@@ -167,11 +169,17 @@
 				{/each}
 			</div>
 
+			<button id="eraser-button" on:click={() => onColorClicked(0)}>
+				<Icon src={XMark} theme='solid' class='color-gray-10'></Icon>
+			</button>
+
 			<label for="lineWidth">Line Width</label>
+
 			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
 
+
 			<button id="clear" on:click={onCancelClicked}>Clear</button>
-			<button on:click={save}>Save</button>
+			<button id="save" on:click={save}>Save</button>
 		</div>
 		<div class="h-screen w-screen bg-slate-700 justify-center flex">
 			<div class="flex flex-col">
