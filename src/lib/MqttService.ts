@@ -20,6 +20,20 @@ export class MqttService {
         });
     }
 
+    private swapCoordinates(originalArray: number[][]) {
+        const newArray = [];
+      
+        for (let y = 0; y < originalArray[0].length; y++) {
+          newArray[y] = [] as number[];
+          
+          for (let x = 0; x < originalArray.length; x++) {
+            newArray[y][x] = originalArray[x][y];
+          }
+        }
+      
+        return newArray;
+      }
+
     public sendMessages(messages: PixelsMsg) {
         this.client.publish(this.topic + "/pixels", JSON.stringify(messages), (err) => {
             if (err) {
@@ -29,13 +43,16 @@ export class MqttService {
     }
 
     public sendAllPixels(messages: number[][]) {
-        const allpixels = {
-            data: messages.map((row) => row.join("")).join("")
+
+        const allpixels = this.swapCoordinates(messages);
+
+        const data = {
+            data: allpixels.flat().flat().join("")
         }
         
-        console.log(allpixels);
+        console.log(allpixels.flat().flat());
 
-        this.client.publish(this.topic + "/allpixels", JSON.stringify(allpixels), (err) => {
+        this.client.publish(this.topic + "/allpixels", JSON.stringify(data), (err) => {
             if (err) {
                 console.error(err);
             }
