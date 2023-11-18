@@ -163,25 +163,22 @@
 				const lines = contents.split("\n");
 
 				lines.forEach(line => {
+					if (line.length == 0) {
+						return;
+					}
+
 					const parts = line.split(",");
 					const x = parseInt(parts[0]);
 					const y = parseInt(parts[1]);
 					const color = parseInt(parts[2]);
-
 					$matrixStore[x][y] = color;
-
-					const msg = {
-						data: [[x, y, color]] as Pixel[]
-					};
-
-					mqtt.sendMessages(msg);
 				});
+
+				mqtt.sendAllPixels($matrixStore);
 			};
 			reader.readAsText(file);
 		};
 		input.click();
-	
-		//mqtt.sendAllPixels($matrixStore);
 	}
 
 	onMount(() => {
@@ -211,9 +208,9 @@
 				on:onLoadClicked={onLoadClicked}
 				on:onCancelClicked={onCancelClicked} />
 
-		<DrawBoard
-			on:onMouseDown={onMouseDown}
-			on:onTouch={onTouch} />
+				<DrawBoard
+				on:onMouseDown={onMouseDown}
+				on:onTouch={onTouch} />
 	</div>
 	<span class="dot" id="cursor" bind:this={cursor} />
 </main>
