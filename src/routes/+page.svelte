@@ -18,6 +18,7 @@
 	let lineWidth: number = 25;
 	let isPainting: boolean = false;
 	let selectedColor: Color = colors[1];
+	let isConnectedToMqtt: boolean = false;
 
 	let mqtt = new MqttService("192.168.1.101:9001", "matrix");
 	//let mqtt = new MqttService("192.168.1.107:9001", "pixelTux");
@@ -29,7 +30,9 @@
 			});
 		});
 
-		mqtt.clear();
+		if (mqtt.isConnected()) {
+			mqtt.clear();
+		}
 	}
 
 	function onColorClicked(event: any) {
@@ -121,7 +124,10 @@
 						const msg = {
 							data: [[pixelPos.x, pixelPos.y, selectedColor.id]] as Pixel[]
 						};
-						mqtt.sendMessages(msg);
+
+						if (mqtt.isConnected()) {
+							mqtt.sendMessages(msg);
+						}
 					}
 				}).then();
 			}
@@ -174,7 +180,9 @@
 					$matrixStore[x][y] = color;
 				});
 
-				mqtt.sendAllPixels($matrixStore);
+				if (mqtt.isConnected()) {
+					mqtt.sendAllPixels($matrixStore);
+				}
 			};
 			reader.readAsText(file);
 		};

@@ -18,6 +18,14 @@ export class MqttService {
         this.client.on("connect", () => {
             this.client.subscribe(topic);
         });
+
+        this.client.on("reconnect", () => {
+            this.client.end();
+        });
+    }
+
+    public isConnected(): boolean {
+        return this.client.connected;
     }
 
     private swapCoordinates(originalArray: number[][]) {
