@@ -125,41 +125,45 @@
 
 <svelte:body on:touchmove={onTouch} on:touchend={onTouchUp} on:mouseover={mouseMove} on:mouseup={onMouseUp} />
 
-<header>
-	<h1>PixelTux</h1>
-</header>
 <main>
-	<div id="toolbar">
-		<label for="stroke">Stroke</label>
-		<select bind:value={selectedColor}>
-			{#each colors as color}
-				<option value={color}>
-					{color.text}
-				</option>
-			{/each}
-		</select>
+	<div id="content">
+		<div id="toolbar">
+				<h1>PixelTux</h1>
 
-		<label for="lineWidth">Line Width</label>
-		<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
+			<label for="stroke">Stroke</label>
+			<select bind:value={selectedColor}>
+				{#each colors as color}
+					<option value={color}>
+						{color.text}
+					</option>
+				{/each}
+			</select>
 
-		<button id="clear" on:click={onCancelClicked}>Clear</button>
-	</div>
+			<label for="lineWidth">Line Width</label>
+			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
 
-	<div class="h-screen w-screen bg-slate-700 justify-center flex">
-		<div class="flex flex-col">
-			<div class="bg-black p-8 grow-0 touch-auto" on:mousedown={onMouseDown} on:touchdown={onTouchDown}>
-				<div class="flex">
-					{#each {length: MATRIX_SIZE_X} as _, x }
-						<div class="flex-col"> 
-							{#each {length: MATRIX_SIZE_Y} as _, y }
-								<div class={"h-2 w-2 ml-1 mb-1 rounded-full mxPixel " + colorForCode($matrixStore[x][y])} data-posX={x}, data-posY={y}></div>
+			<button id="clear" on:click={onCancelClicked}>Clear</button>
+		</div>
+
+		<div>
+			<div class="h-screen w-screen bg-slate-700 justify-center flex">
+				<div class="flex flex-col">
+					<div class="bg-black p-8 grow-0 touch-auto" on:mousedown={onMouseDown} on:touchdown={onTouchDown}>
+						<div class="flex">
+							{#each {length: MATRIX_SIZE_X} as _, x }
+								<div class="flex-col">
+									{#each {length: MATRIX_SIZE_Y} as _, y }
+										<div class={"h-2 w-2 ml-1 mb-1 rounded-full mxPixel " + colorForCode($matrixStore[x][y])} data-posX={x}, data-posY={y}></div>
+									{/each}
+								</div>
 							{/each}
 						</div>
-					{/each}
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+
 	<span class="dot" id="cursor" bind:this={cursor} />
 </main>
 
