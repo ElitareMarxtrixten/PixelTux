@@ -29,10 +29,6 @@ export class MqttService {
         this.client.end();
     }
 
-    public isConnected(): boolean {
-        return this.client === undefined ? false : this.client.connected;
-    }
-
     private swapCoordinates(originalArray: number[][]) {
         const newArray = [];
       

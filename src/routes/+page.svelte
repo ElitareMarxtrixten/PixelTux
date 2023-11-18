@@ -20,6 +20,7 @@
 	let mqttAddress = "";
 	let topicPrefix = "";
 	let loading = false;
+	let isMqttConnected: boolean = false;
 
 	let mqttService = new MqttService();
 
@@ -30,7 +31,7 @@
 			});
 		});
 
-		if (mqttService.isConnected()) {
+		if (isMqttConnected) {
 			mqttService.clear();
 		}
 	}
@@ -125,7 +126,7 @@
 							data: [[pixelPos.x, pixelPos.y, selectedColor.id]] as Pixel[]
 						};
 
-						if (mqttService.isConnected()) {
+						if (isMqttConnected) {
 							mqttService.sendMessages(msg);
 						}
 					}
@@ -180,7 +181,7 @@
 					$matrixStore[x][y] = color;
 				});
 
-				if (mqttService.isConnected()) {
+				if (isMqttConnected) {
 					mqttService.sendAllPixels($matrixStore);
 				}
 			};
@@ -199,22 +200,26 @@
 			alert("no topic prefix given!")
 		}
 
-		if (mqttService.isConnected()) {
-			mqttService.disconnect()
+		if (isMqttConnected) {
+			mqttService.disconnect();
 		}
 
 		loading = true
 		try {
 			mqttService.connect(mqttAddress, topicPrefix);
 		} catch (_) {
+			isMqttConnected = false;
 			alert("Something went wrong during connection with mqqt message broker - see debug console for details");
 		} finally {
 			loading = false;
 		}
+
+		isMqttConnected = true;
 	}
 
 	function handleCloseSubscription() {
 		mqttService.disconnect();
+		isMqttConnected = false;
 	}
 
 	onMount(() => {
@@ -255,7 +260,7 @@
 						<label for="server-ip" class="text-gray-300 text-lg" >MQTT-Server Address:</label>
 						<input id="server-ip"
 							   bind:value={mqttAddress}
-							   disabled={mqttService.isConnected()}
+							   disabled={isMqttConnected}
 							   class="w-40 rounded-md py-1 px-2 text-gray-200 bg-slate-600 border border-slate-800">
 					</div>
 
@@ -263,15 +268,15 @@
 						<label for="topic-prefix" class="text-gray-300 text-lg">Topic-Prefix</label>
 						<input id="topic-prefix"
 							   bind:value={topicPrefix}
-							   disabled={mqttService.isConnected()}
+							   disabled={isMqttConnected}
 							   class="w-40 rounded-md py-1 px-2 text-gray-200 bg-slate-600 border border-slate-800">
 					</div>
 
-					{#if !mqttService.isConnected()}
+					{#if !isMqttConnected}
 						<button class="w-40 h-10 rounded-md py-1 px-2 text-gray-200 bg-slate-600 border border-slate-800"
 								class:opacity-50={loading} disabled={loading}>Connect</button>
 					{:else}
-						<button on:click|preventDefault={handleCloseSubscription}
+						<button on:click={handleCloseSubscription}
 								class="w-40 h-10 rounded-md py-1 px-2 text-gray-200 bg-red-900 border border-red-950">Disconnect</button>
 					{/if}
 				</form>
