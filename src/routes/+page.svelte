@@ -9,17 +9,19 @@
 	import {ArrowDownTray} from "@steeze-ui/heroicons";
 	import {ArrowUpTray} from "@steeze-ui/heroicons";
 	import {Trash} from "@steeze-ui/heroicons";
+	import {onMount} from "svelte";
 
 	type Color = {
 		id: number;
-		cssId: string
+		cssId: string;
+		cssClass: string;
 	};
 
 	let colors: Color[] = [
-		{ id: 0, cssId: `Grey` },
-		{ id: 1, cssId: `color-red` },
-		{ id: 2, cssId: `color-green` },
-		{ id: 3, cssId: `color-orange` }
+		{ id: 0, cssId: `color-grey`, cssClass: 'bg-gray-500' },
+		{ id: 1, cssId: `color-red`, cssClass: 'bg-red-600' },
+		{ id: 2, cssId: `color-green`, cssClass: 'bg-lime-500' },
+		{ id: 3, cssId: `color-orange`, cssClass: 'bg-amber-500' }
 	];
 
 	let cursor: HTMLElement|undefined = undefined;
@@ -62,6 +64,10 @@
 
 	function onColorClicked(colorId: number) {
 		selectedColor = colors.find(color => color.id === colorId);
+
+		cursor?.classList.remove(...cursor?.classList);
+		cursor?.classList.add('dot');
+		cursor?.classList.add(selectedColor.cssClass);
 	}
 
 	function onMouseDown(event: MouseEvent) {
@@ -184,6 +190,10 @@
 	
 		//mqtt.sendAllPixels($matrixStore);
 	}
+
+	onMount(() => {
+		cursor?.classList.add(colors[1].cssClass);
+	});
 </script>
 
 <svelte:head>
@@ -201,19 +211,17 @@
 			<label>Colors</label>
 			<div id="colors">
 				{#each colors as color}
-					<div id="{color.cssId}" on:click={() => onColorClicked(color.id)}></div>
+					<div id="{color.cssId}" class="{color.cssClass}" on:click={() => onColorClicked(color.id)}></div>
 				{/each}
 			</div>
-
-			<button id="eraser-button" on:click={() => onColorClicked(0)}>
-				<Icon src={XMark} theme='solid' class='color-gray-10'></Icon>
-			</button>
 
 			<label for="lineWidth">Line Width</label>
 
 			<input id="lineWidth" name="lineWidth" type="number" min="1" bind:value={lineWidth}>
 
-
+			<button id="eraser-button" on:click={() => onColorClicked(0)}>
+				<Icon src={XMark} theme='solid' class='color-gray-10'></Icon>
+			</button>
 			<button id="clear-button" on:click={onCancelClicked}>
 				<Icon src={Trash} theme='solid' class='color-gray-10'></Icon>
 			</button>

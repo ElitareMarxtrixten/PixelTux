@@ -71,7 +71,6 @@ h1 {
 .dot {
 	height: 25px;
 	width: 25px;
-	background-color: #bbb;
 	border: black 1px solid;
 	border-radius: 50%;
 	border-color:black;
@@ -91,21 +90,9 @@ h1 {
 
 #color-green, #color-red, #color-orange {
 	border-radius: 100%;
-	width: 1.5em;
-	height: 1.5em;
+	width: 2em;
+	height: 2em;
 	margin: 0.3em;
-}
-
-#color-green {
-	background-color: green;
-}
-
-#color-red {
-	background-color: red;
-}
-
-#color-orange {
-	background-color: orange;
 }
 
 #clear-button, #eraser-button, #save-button, #load-button {
